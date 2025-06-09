@@ -1,0 +1,44 @@
+{
+  "name": "@kubernetics/semantic-release-config",
+  "version": "0.0.1",
+  "description": "semantic-release shareable config",
+  "dependencies": {
+    "@codedependant/semantic-release-docker": "^5.0.3",
+    "@semantic-release/changelog": "^6.0.0",
+    "@semantic-release/commit-analyzer": "^9.0.1",
+    "@semantic-release/git": "^10.0.0",
+    "@semantic-release/github": "^9.2.6",
+    "@semantic-release/release-notes-generator": "^10.0.2",
+    "conventional-changelog": "^3.1.24",
+    "conventional-changelog-conventionalcommits": "^4.6.3",
+    "conventional-commits-parser": "^3.2.4",
+    "semantic-release": "^20.1.0",
+    "semantic-release-helm3": "^2.9.3"
+  },
+  "devDependencies": {
+    "xo": "0.47.0"
+  },
+  "engines": {
+    "node": ">=14.17"
+  },
+  "files": [
+    "index.js"
+  ],
+  "main": "index.js",
+  "peerDependencies": {
+    "semantic-release": ">=18.0.0"
+  },
+  "scripts": {
+    "semantic-release": "semantic-release",
+    "test": "xo",
+    "lint": "xo"
+  },
+  "xo": {
+    "prettier": true,
+    "space": true,
+    "rules": {
+      "unicorn/string-content": "off",
+      "unicorn/prefer-module": "off"
+    }
+  }
+}

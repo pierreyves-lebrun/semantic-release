@@ -1,0 +1,15 @@
+#!/bin/bash
+
+DIR="${GITHUB_WORKSPACE:-$PWD}"
+
+if [[ ! -f "${DIR}/.releaserc" ]] \
+    && [[ ! -f "${DIR}/.releaserc.yml" ]] \
+    && [[ ! -f "${DIR}/.releaserc.yaml" ]] \
+    && [[ ! -f "${DIR}/.releaserc.json" ]] \
+    && [[ ! -f "${DIR}/.releaserc.js" ]] \
+    && [[ ! -f "${DIR}/.release.config.cjs" ]]; then
+    # If there's no config file, use the default shared config
+    set -- "$@" --extends '@kubernetics/semantic-release-config'
+fi
+
+exec /opt/semantic-release/node_modules/.bin/semantic-release "$@"

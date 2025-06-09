@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@kubernetics/semantic-release-config": "file:semantic-release-config"
+  }
+}

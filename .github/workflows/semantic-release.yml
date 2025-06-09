@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - master
+      - main
+      - '*.*.x'
+    tags-ignore:
+      - '*'
+  workflow_dispatch:
+
+
+permissions:
+  contents: read # for checkout
+
+jobs:
+  semantic-release:
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write # to be able to publish a GitHub release
+      issues: write # to be able to comment on released issues
+      pull-requests: write # to be able to comment on released pull requests
+    container:
+      image: pierreyveslebrun/semantic-release:49ecd0902349bf871b477e4c1ab1bb9777e7af00
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Inject branch name env var
+        uses: rlespinasse/github-slug-action@v4
+
+      - name: Publish container image
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          BRANCH_NAME: ${{ env.GITHUB_REF_NAME }}
+          DOCKER_REGISTRY_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_REGISTRY_PASSWORD: ${{ secrets.DOCKERHUB_TOKEN }}
+        run: |
+          git config --global --add safe.directory '*'
+          semantic-release --dockerImage=pierreyveslebrun/semantic-release --dockerRegistry=docker.io
