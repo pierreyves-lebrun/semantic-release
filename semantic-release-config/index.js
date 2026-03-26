@@ -3,7 +3,7 @@ const repoName = fullRepoName ? fullRepoName.split('/')[1] : null;
 
 
 let isHelmRepo = false;
-if (repoName && (repoName.endsWith('-helm') || repoName.endsWith('-charts'))) {
+if (repoName && repoName.endsWith('-helm')) {
   isHelmRepo = true;
 }
 
@@ -20,6 +20,7 @@ module.exports = {
   branches: [
     'main',
     'master',
+    'semantic-release',
     { name: '+([0-9])?(.{+([0-9]),x}).x', channel: currentBranch },
     { name: currentBranch, prerelease: prereleaseTag }
   ],
