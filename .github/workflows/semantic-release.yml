@@ -5,11 +5,10 @@ on:
     branches:
       - master
       - main
-      - '*.*.x'
+      - "*.*.x"
     tags-ignore:
-      - '*'
+      - "*"
   workflow_dispatch:
-
 
 permissions:
   contents: read # for checkout
@@ -22,7 +21,7 @@ jobs:
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
     container:
-      image: pierreyveslebrun/semantic-release:1.0.0
+      image: pierreyveslebrun/semantic-release:1.1.0
 
     steps:
       - name: Checkout repo

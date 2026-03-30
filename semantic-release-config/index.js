@@ -20,7 +20,6 @@ module.exports = {
   branches: [
     'main',
     'master',
-    'semantic-release',
     { name: '+([0-9])?(.{+([0-9]),x}).x', channel: currentBranch },
     { name: currentBranch, prerelease: prereleaseTag }
   ],
