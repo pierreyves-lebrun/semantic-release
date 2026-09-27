@@ -2,14 +2,35 @@
 
 DIR="${GITHUB_WORKSPACE:-$PWD}"
 
-if [[ ! -f "${DIR}/.releaserc" ]] \
-    && [[ ! -f "${DIR}/.releaserc.yml" ]] \
-    && [[ ! -f "${DIR}/.releaserc.yaml" ]] \
-    && [[ ! -f "${DIR}/.releaserc.json" ]] \
-    && [[ ! -f "${DIR}/.releaserc.js" ]] \
-    && [[ ! -f "${DIR}/.release.config.cjs" ]]; then
-    # If there's no config file, use the default shared config
-    set -- "$@" --extends '@kubernetics/semantic-release-config'
+CONFIG_FILES=(
+  .releaserc
+  .releaserc.json
+  .releaserc.yaml
+  .releaserc.yml
+  .releaserc.js
+  .releaserc.cjs
+  release.config.js
+  release.config.cjs
+)
+
+has_config=false
+for f in "${CONFIG_FILES[@]}"; do
+  if [[ -f "${DIR}/${f}" ]]; then
+    has_config=true
+    break
+  fi
+done
+
+# A `release` key in package.json is a config source too, and is easy to miss
+# because there is no file to stat.
+if [[ "${has_config}" == false ]] && [[ -f "${DIR}/package.json" ]]; then
+  if node -e 'process.exit(require(process.argv[1]).release ? 0 : 1)' "${DIR}/package.json" 2>/dev/null; then
+    has_config=true
+  fi
+fi
+
+if [[ "${has_config}" == false ]]; then
+  set -- "$@" --extends '@kubernetics/semantic-release-config'
 fi
 
 exec /opt/semantic-release/node_modules/.bin/semantic-release "$@"

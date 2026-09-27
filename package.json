@@ -1,4 +1,7 @@
 {
+  "name": "semantic-release-base",
+  "version": "0.0.0",
+  "private": true,
   "dependencies": {
     "@kubernetics/semantic-release-config": "file:semantic-release-config"
   }

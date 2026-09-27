@@ -10,7 +10,14 @@ if (repoName && repoName.endsWith('-helm')) {
 const defaultBranches = ['refs/heads/master', 'refs/heads/main'];
 const isDefaultBranch = defaultBranches.includes(process.env.GITHUB_REF);
 
-const currentBranch = process.env.BRANCH_NAME;
+const currentBranch = process.env.BRANCH_NAME || process.env.GITHUB_REF_NAME;
+
+if (!currentBranch) {
+  throw new Error(
+    'BRANCH_NAME (or GITHUB_REF_NAME) must be set: the shared semantic-release ' +
+    'config derives the prerelease channel from the current branch.'
+  );
+}
 
 // Replace any character not a letter, digit, or hyphen with a hyphen
 const prereleaseTag = currentBranch.replace(/[^0-9A-Za-z-]+/g, '-');
@@ -24,9 +31,12 @@ module.exports = {
     { name: currentBranch, prerelease: prereleaseTag }
   ],
   ci: true,
-  debug: true,
   tagFormat: '${version}',
   preset: 'conventionalcommits',
+  releaseRules: [
+    {breaking: true, release: 'major'},
+    {type: 'refactor', release: 'patch'}
+  ],
   generateNotes: [
     {
       path: '@semantic-release/release-notes-generator',
@@ -43,7 +53,6 @@ module.exports = {
   dockerAutoClean: false,
   plugins: [
     '@semantic-release/commit-analyzer',
-    '@semantic-release/release-notes-generator',
     // Conditional plugin inclusion
     (isHelmRepo ? 'semantic-release-helm3' : '@codedependant/semantic-release-docker'),
     '@semantic-release/github'
