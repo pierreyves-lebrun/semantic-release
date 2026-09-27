@@ -7,6 +7,16 @@ if (repoName && repoName.endsWith('-helm')) {
   isHelmRepo = true;
 }
 
+const workspace = process.env.GITHUB_WORKSPACE || process.cwd();
+let isNpmPackage = false;
+try {
+  // eslint-disable-next-line import/no-dynamic-require
+  const pkg = require(require('node:path').join(workspace, 'package.json'));
+  isNpmPackage = pkg.private !== true && Boolean(pkg.publishConfig && pkg.publishConfig.registry);
+} catch {
+  // No readable package.json: treat the repo as a deployable artifact.
+}
+
 const defaultBranches = ['refs/heads/master', 'refs/heads/main'];
 const isDefaultBranch = defaultBranches.includes(process.env.GITHUB_REF);
 
@@ -69,8 +79,11 @@ module.exports = {
   dockerAutoClean: false,
   plugins: [
     '@semantic-release/commit-analyzer',
-    // Conditional plugin inclusion
-    (isHelmRepo ? 'semantic-release-helm3' : '@codedependant/semantic-release-docker'),
+    (isHelmRepo
+      ? 'semantic-release-helm3'
+      : isNpmPackage
+        ? '@semantic-release/npm'
+        : '@codedependant/semantic-release-docker'),
     '@semantic-release/github'
   ]
 };
