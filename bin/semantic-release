@@ -33,4 +33,11 @@ if [[ "${has_config}" == false ]]; then
   set -- "$@" --extends '@kubernetics/semantic-release-config'
 fi
 
-exec /opt/semantic-release/node_modules/.bin/semantic-release "$@"
+# Resolve semantic-release relative to this script rather than to a fixed path,
+# so the wrapper works both inside the image (/opt/semantic-release/bin) and
+# from an ordinary checkout on a CI runner (<repo>/bin). The repo releases
+# itself with the latter, which is what keeps it from having to run inside the
+# image it publishes.
+SCRIPT_DIR="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+
+exec "${SCRIPT_DIR}/../node_modules/.bin/semantic-release" "$@"
